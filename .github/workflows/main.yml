@@ -1,0 +1,45 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request 
+# events but only for the master branch
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    - name: Get the version
+      id: get:_version
+      run: |
+        echo Commit :${GITHUB_SHA}
+        echo Branch: ${GITHUB_REF##*/}
+        echo ::set-output name=COMMIT::${GITHUB_SHA}
+        echo ::set-output name=BRANCH::${GITHUB_REF##*/}
+        
+    - name: Publish image to Registry
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: ${{ github.repository }}
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        registry: ${{ env.DOCKER_REGISTRY }}
+        tags: "latest,${{ steps.get_version.outputs.COMMIT }}"
+        
+    - name: Notify Humanitec
+      run: |
+        echo "Notifying humanitec about new push for ${GITHUB_REPOSITORY}"
+        curl -s -w "%{http_code}" -H "Content-Type:application/json" -d "{\"commit\":\"${GITHUB_SHA}\",\"branch\":\"${GITHUB_REF##*/}\",\"tags\":[],\"image\":\"${DOCKER_REGISTRY}/${GITHUB_REPOSITORY}:${GITHUB_SHA}\"}" "https://dev-api.walhall.io/orgs/${GITHUB_REPOSITORY%/*}/modules/${GITHUB_REPOSITORY#*/}/builds"
