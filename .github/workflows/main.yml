@@ -23,7 +23,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Get the version
-      id: get:_version
+      id: get_version
       run: |
         echo Commit :${GITHUB_SHA}
         echo Branch: ${GITHUB_REF##*/}
