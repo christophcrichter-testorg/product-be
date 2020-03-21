@@ -4,6 +4,7 @@ on: [push]
 
 env:
   DOCKER_REGISTRY: harbor-dev.walhall.io
+  DOCKER_ORG: christoph-test
 
 jobs:
   build:
@@ -26,6 +27,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         registry: ${{ env.DOCKER_REGISTRY }}
+        workdir: ${{ env.DOCKER_ORG }}
         tags: "latest,${{ steps.get_version.outputs.COMMIT }}"
 
     - name: Notify Humanitec
