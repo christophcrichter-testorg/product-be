@@ -27,7 +27,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         registry: ${{ env.DOCKER_REGISTRY }}
-        workdir: ${{ env.DOCKER_ORG }}
+        context: ${{ env.DOCKER_ORG }}
         tags: "latest,${{ steps.get_version.outputs.COMMIT }}"
 
     - name: Notify Humanitec
