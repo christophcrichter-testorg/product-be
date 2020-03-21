@@ -30,14 +30,28 @@ jobs:
         echo ::set-output name=COMMIT::${GITHUB_SHA}
         echo ::set-output name=BRANCH::${GITHUB_REF##*/}
         
-    - name: Publish image to Registry
-      uses: elgohr/Publish-Docker-Github-Action@master
-      with:
-        name: ${{ github.repository }}
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        registry: ${{ env.DOCKER_REGISTRY }}
-        tags: "latest,${{ steps.get_version.outputs.COMMIT }}"
+    - name: Docker Publish
+        uses: manusa/actions-publish-docker@v1.0.1
+        with:
+          # Name of the Docker image
+          name: ${{ github.repository }}
+          # Tag for the Docker image
+          tag: "latest,${{ steps.get_version.outputs.COMMIT }}" # optional
+          # Username for Docker registry
+          username: ${{ secrets.DOCKER_USERNAME }}
+          # Password for Docker registry
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          # Registry URL
+          registry: ${{ secrets.DOCKER_REGISTRY }}
+    
+#    - name: Publish image to Registry
+#      uses: elgohr/Publish-Docker-Github-Action@master
+#      with:
+#        name: ${{ github.repository }}
+#        username: ${{ secrets.DOCKER_USERNAME }}
+#        password: ${{ secrets.DOCKER_PASSWORD }}
+#        registry: ${{ env.DOCKER_REGISTRY }}
+#        tags: "latest,${{ steps.get_version.outputs.COMMIT }}"
         
     - name: Notify Humanitec
       run: |
