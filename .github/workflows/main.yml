@@ -3,7 +3,7 @@ name: CI
 on: [push]
 
 env:
-  DOCKER_REGISTRY: harbor-dev.walhall.io
+  DOCKER_REGISTRY: harbor-dev.walhall.io/christoph-test
   DOCKER_ORG: christoph-test
 
 jobs:
@@ -27,7 +27,6 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         registry: ${{ env.DOCKER_REGISTRY }}
-        context: ${{ env.DOCKER_ORG }}
         tags: "latest,${{ steps.get_version.outputs.COMMIT }}"
 
     - name: Notify Humanitec
